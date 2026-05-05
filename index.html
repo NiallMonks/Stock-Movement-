@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stock Movement – Lovingly Artisan</title>
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --khaki: #8B8468;
+    --khaki-dark: #6b6450;
+    --ink: #1a1a18;
+    --border: rgba(139,132,104,0.25);
+    --border-strong: rgba(139,132,104,0.45);
+    --white: #ffffff;
+    --green-soft: #e8f0e4;
+    --green-text: #3a5c2a;
+    --green-border: #b0ceA4;
+    --amber-soft: #f5ead4;
+    --amber-text: #7a4e10;
+    --amber-border: #d4b07a;
+    --purple-soft: #f0eafa;
+    --purple-text: #5a3a8a;
+    --red: #c0392b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--cream); min-height: 100vh; color: var(--ink); }
+  .app { max-width: 640px; margin: 0 auto; padding: 16px; }
+
+  .header { background: var(--ink); border-radius: 14px; padding: 16px 20px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .header-title { font-size: 17px; font-weight: 600; color: var(--white); }
+  .header-sub { font-size: 11px; color: var(--khaki); margin-top: 3px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .admin-link { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18); color: var(--cream); border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer; flex-shrink: 0; }
+  .admin-link:hover { background: rgba(255,255,255,0.18); }
+
+  .tabs { display: flex; gap: 4px; margin-bottom: 14px; background: rgba(139,132,104,0.15); border-radius: 10px; padding: 4px; }
+  .tab { flex: 1; text-align: center; padding: 9px 6px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--khaki-dark); border: none; background: transparent; transition: all 0.15s; }
+  .tab.active { background: var(--white); color: var(--ink); box-shadow: 0 1px 4px rgba(26,26,24,0.12); }
+
+  .card { background: var(--white); border-radius: 12px; border: 0.5px solid var(--border-strong); padding: 20px; margin-bottom: 14px; }
+
+  .form-row { margin-bottom: 13px; }
+  .form-row label { display: block; font-size: 11px; font-weight: 600; color: var(--khaki); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.6px; }
+  .form-row input, .form-row select { width: 100%; padding: 10px 12px; border: 1px solid var(--border-strong); border-radius: 8px; font-size: 14px; background: var(--cream); color: var(--ink); outline: none; appearance: none; -webkit-appearance: none; }
+  .form-row input:focus, .form-row select:focus { border-color: var(--khaki); box-shadow: 0 0 0 3px rgba(139,132,104,0.15); background: var(--white); }
+  .other-hint { font-size: 12px; color: var(--khaki); margin-top: 5px; }
+
+  .direction-bar { display: flex; align-items: center; gap: 8px; }
+  .dir-from, .dir-to { flex: 1; text-align: center; padding: 9px 10px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1.5px solid transparent; }
+  .loc-p { background: var(--green-soft); color: var(--green-text); border-color: var(--green-border); }
+  .loc-b { background: var(--amber-soft); color: var(--amber-text); border-color: var(--amber-border); }
+  .arrow-mid { color: var(--khaki); font-size: 18px; flex-shrink: 0; }
+  .swap-btn { background: var(--cream); border: 1px solid var(--border-strong); border-radius: 8px; padding: 9px 12px; cursor: pointer; font-size: 15px; color: var(--khaki-dark); flex-shrink: 0; }
+  .swap-btn:hover { background: rgba(139,132,104,0.12); }
+
+  .submit-btn { width: 100%; padding: 13px; background: var(--ink); color: var(--cream); border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 2px; }
+  .submit-btn:hover { background: #2e2e2c; }
+  .submit-btn:active { transform: scale(0.99); }
+
+  .pending-list, .log-list { display: flex; flex-direction: column; gap: 8px; }
+  .pending-item { background: var(--cream); border-radius: 10px; padding: 13px 14px; display: flex; align-items: center; gap: 12px; border: 0.5px solid var(--border); }
+  .p-info { flex: 1; min-width: 0; }
+  .p-name { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .p-meta { font-size: 12px; color: var(--khaki); margin-top: 3px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .dir-badge { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 5px; }
+  .badge-pb { background: var(--green-soft); color: var(--green-text); }
+  .badge-bp { background: var(--amber-soft); color: var(--amber-text); }
+  .badge-other { background: var(--purple-soft); color: var(--purple-text); }
+  .p-qty { font-size: 20px; font-weight: 700; color: var(--ink); }
+  .confirm-btn { background: var(--ink); color: var(--cream); border: none; border-radius: 8px; padding: 8px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .confirm-btn:hover { background: #2e2e2c; }
+
+  .log-item { display: flex; align-items: center; gap: 10px; padding: 10px 13px; background: var(--cream); border-radius: 8px; font-size: 13px; border: 0.5px solid var(--border); }
+  .log-time { color: var(--khaki); font-size: 11px; min-width: 90px; }
+  .log-name { font-weight: 500; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+  .log-qty { font-weight: 600; color: var(--ink); min-width: 30px; text-align: right; }
+  .log-dir { font-size: 11px; color: var(--khaki); min-width: 30px; text-align: center; }
+  .log-init { font-size: 11px; color: var(--khaki); min-width: 28px; text-align: right; }
+
+  .filter-row { display: flex; gap: 6px; margin-bottom: 12px; }
+  .filter-btn { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border-strong); background: var(--cream); font-size: 12px; cursor: pointer; color: var(--khaki-dark); }
+  .filter-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+  .empty { text-align: center; color: var(--khaki); font-size: 13px; padding: 32px 0; }
+  .section-label { font-size: 11px; font-weight: 600; color: var(--khaki); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; }
+  .count-badge { display: inline-block; background: var(--red); color: #fff; border-radius: 10px; font-size: 10px; font-weight: 700; padding: 1px 6px; margin-left: 4px; vertical-align: middle; }
+
+  .overlay { position: fixed; inset: 0; background: rgba(26,26,24,0.55); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+  .overlay.hidden { display: none; }
+  .modal { background: var(--white); border-radius: 14px; padding: 28px 24px; width: 100%; max-width: 360px; border: 0.5px solid var(--border-strong); }
+  .modal h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--ink); }
+  .modal p { font-size: 13px; color: var(--khaki); margin-bottom: 18px; }
+  .pin-input { width: 100%; padding: 12px; border: 1.5px solid var(--border-strong); border-radius: 8px; font-size: 22px; letter-spacing: 8px; text-align: center; outline: none; font-weight: 600; background: var(--cream); color: var(--ink); }
+  .pin-input:focus { border-color: var(--khaki); }
+  .pin-input.error { border-color: var(--red); animation: shake 0.3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .modal-btns { display: flex; gap: 8px; margin-top: 14px; }
+  .modal-btns button { flex: 1; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-cancel { background: var(--cream); border: 1px solid var(--border-strong); color: var(--khaki-dark); }
+  .btn-enter { background: var(--ink); border: none; color: var(--cream); }
+
+  .admin-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .admin-header h2 { font-size: 16px; font-weight: 600; flex: 1; color: var(--ink); }
+  .back-btn { background: var(--cream); border: 1px solid var(--border-strong); border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer; color: var(--khaki-dark); }
+  .lock-btn { background: var(--cream); border: 1px solid var(--border-strong); border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer; color: var(--red); }
+  .list-tabs { display: flex; gap: 5px; margin-bottom: 14px; background: var(--cream); border-radius: 8px; padding: 3px; border: 0.5px solid var(--border); }
+  .list-tab { flex: 1; text-align: center; padding: 7px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--khaki-dark); border: none; background: transparent; }
+  .list-tab.active { background: var(--white); color: var(--ink); box-shadow: 0 1px 3px rgba(26,26,24,0.1); }
+  .add-row { display: flex; gap: 8px; margin-bottom: 14px; }
+  .add-row input { flex: 1; padding: 9px 12px; border: 1px solid var(--border-strong); border-radius: 8px; font-size: 14px; outline: none; background: var(--cream); color: var(--ink); }
+  .add-row input:focus { border-color: var(--khaki); background: var(--white); }
+  .add-row button { background: var(--ink); color: var(--cream); border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .item-list { display: flex; flex-direction: column; gap: 5px; max-height: 420px; overflow-y: auto; }
+  .item-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--cream); border-radius: 8px; border: 0.5px solid var(--border); }
+  .item-row span { flex: 1; font-size: 13px; color: var(--ink); }
+  .remove-btn { background: none; border: none; color: #bbb; cursor: pointer; font-size: 16px; padding: 2px 6px; border-radius: 5px; line-height: 1; flex-shrink: 0; }
+  .remove-btn:hover { background: #fce8e8; color: var(--red); }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--cream); padding: 10px 22px; border-radius: 10px; font-size: 13px; font-weight: 500; opacity: 0; transition: opacity 0.25s; pointer-events: none; z-index: 999; white-space: nowrap; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div id="main-ui">
+    <div class="header">
+      <div>
+        <div class="header-title">Stock Movement</div>
+        <div class="header-sub">Lovingly Artisan &nbsp;·&nbsp; Plumgarths &amp; Burneside</div>
+      </div>
+      <button class="admin-link" onclick="openAdminPrompt()">&#9881; Admin</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('request')">Request</button>
+      <button class="tab" onclick="showTab('pending')">Pending<span id="pending-badge"></span></button>
+      <button class="tab" onclick="showTab('log')">History</button>
+    </div>
+
+    <div id="tab-request">
+      <div class="card">
+        <div class="form-row">
+          <label>Your initials</label>
+          <input type="text" id="initials" maxlength="4" placeholder="e.g. JS" oninput="this.value=this.value.toUpperCase()">
+        </div>
+        <div class="form-row">
+          <label>Direction</label>
+          <div class="direction-bar">
+            <div class="dir-from loc-p" id="dir-from">Plumgarths</div>
+            <div class="arrow-mid">&#8594;</div>
+            <div class="dir-to loc-b" id="dir-to">Burneside</div>
+            <button class="swap-btn" onclick="swapDirection()">&#8646;</button>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Category</label>
+          <select id="cat-select" onchange="onCatChange()">
+            <option value="ingredient">Ingredients</option>
+            <option value="consumable">Consumables / Cleaning Stock</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div id="item-dropdown-row" class="form-row">
+          <label>Item</label>
+          <select id="item-select"></select>
+        </div>
+        <div id="item-text-row" class="form-row" style="display:none;">
+          <label>Item description</label>
+          <input type="text" id="item-text" placeholder="Describe what needs to be moved">
+          <div class="other-hint">Use this for anything not on the lists</div>
+        </div>
+        <div class="form-row">
+          <label>Quantity</label>
+          <input type="number" id="qty-input" min="0.01" step="any" placeholder="0">
+        </div>
+        <div class="form-row">
+          <label>Notes (optional)</label>
+          <input type="text" id="notes-input" placeholder="e.g. ref, batch, reason">
+        </div>
+        <button class="submit-btn" onclick="submitRequest()">Submit Request</button>
+      </div>
+    </div>
+
+    <div id="tab-pending" style="display:none;">
+      <div class="card">
+        <div class="section-label">Awaiting confirmation</div>
+        <div class="filter-row">
+          <button class="filter-btn active" onclick="setPF('all',this)">All</button>
+          <button class="filter-btn" onclick="setPF('PB',this)">P &#8594; B</button>
+          <button class="filter-btn" onclick="setPF('BP',this)">B &#8594; P</button>
+        </div>
+        <div class="pending-list" id="pending-list"></div>
+      </div>
+    </div>
+
+    <div id="tab-log" style="display:none;">
+      <div class="card">
+        <div class="section-label">Movement history</div>
+        <div class="filter-row">
+          <button class="filter-btn active" onclick="setLF('all',this)">All</button>
+          <button class="filter-btn" onclick="setLF('today',this)">Today</button>
+          <button class="filter-btn" onclick="setLF('week',this)">This week</button>
+        </div>
+        <div class="log-list" id="log-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="admin-ui" style="display:none;">
+    <div class="card">
+      <div class="admin-header">
+        <button class="back-btn" onclick="closeAdmin()">&#8592; Back</button>
+        <h2>Manage Item Lists</h2>
+        <button class="lock-btn" onclick="closeAdmin()">&#128274; Lock</button>
+      </div>
+      <div class="list-tabs">
+        <button class="list-tab active" onclick="setListTab('ingredient',this)">Ingredients</button>
+        <button class="list-tab" onclick="setListTab('consumable',this)">Consumables</button>
+      </div>
+      <div class="add-row">
+        <input type="text" id="new-item-input" placeholder="Add new item..." onkeydown="if(event.key==='Enter')addItem()">
+        <button onclick="addItem()">+ Add</button>
+      </div>
+      <div class="item-list" id="admin-item-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="overlay hidden" id="pin-overlay">
+  <div class="modal">
+    <h2>Admin access</h2>
+    <p>Enter the passcode to manage item lists.</p>
+    <input class="pin-input" type="password" id="pin-input" maxlength="4" inputmode="numeric" placeholder="&#9679;&#9679;&#9679;&#9679;" onkeydown="if(event.key==='Enter')checkPin()">
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closePin()">Cancel</button>
+      <button class="btn-enter" onclick="checkPin()">Enter</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PASSCODE = '2047';
+const DEFAULT_ITEMS = {
+  ingredient: ["45T Flour","Apples","Baking Powder","Barber Wheat Flour (Lovingly Artisan)","Barley Crystal Malt","Bicarbonate of Soda","Black Pepper","Bran","Breadcrumbs (Lovingly Artisan)","Brown Flour (Lovingly Artisan)","Brown Linseed","Brown Sugar","Butter - 250g Blocks","Caster Sugar","Chillies","Chocolate Drops","Chocolate Stick","Chocomalt","Cinnamon","Coffee","Cold Custard","Cranberries","Cracked Rye","Einkorn Flour","Emmer Flour","Garlic","Golden Linseed","Grand Siecle Flour","Ground Ginger","Gruau Rouge Flour","Honey","Jumbo Oats","Kalamata Olives","Kombucha","Lamination Butter","Lemons","Light Malt Extract","Light Malt Syrup","Liquid Egg","Macpaste","Maldon Salt","Marmite","Milk","Milk Powder","Millet","Mincemeat","Mixed Herbs","Mixed Spice","Molden Salt","Moulbie Brioche Flour","Mrs Kirkhams Cheese","Nelson Wheat Flour (Lovingly Artisan)","Ntense 800 Malt Extract","Orange Pieces","Raisins","Rapeseed Oil","Rolled Oats","Rollright Flour","Rye Flour (Lovingly Artisan)","Saf Pro 300","Saffron","Salt","Semolina","Spelt Flour","Sultanas","Sunflower Seed","Tomatoes","Veg Oil Box","White Sourdough Starter","Wychwood Flour","Yeast"],
+  consumable: ["A4 Printer Paper","Bin Bags","Blue Clothes","Blue Rack Bags","Blue Roll","Brown Silicon Sheet - 400 x 320","Chlorine Tablets","Clear Tape","Face Masks","Food, Plant & Oven Cleaner","Glass & Mirror Cleaner","Handled Bags","Heavy Duty Cleaner","Hoover Bag","Kitchen Cleaner","Labels 102 - 64 (Box Labels)","Labels 57 - 32 (Natasha's Law)","Large Boxes","Large Gloves","Large Wax Bags - 460 x 300","Lemon Detergent","Medium Gloves","Mop Head","Oven Cleaner","Oven Gloves","Pallet Wrap","Pastry Wax Bags - 150 x 60","Plastic Bag 20-30","Plastic Bag 24-36","Safety Floor Cleaner","Slicing Bag","Slicing Bag Tape","Small Boxes","Small Gloves","Small Online Boxes","Small Wax Bags - 390 x 175","Thick Bleach","Toilet Cleaner","Toilet Roll","White Silicon 350-525","White Silicon 460-750","White Silicon 525-825","Wood Pellets"]
+};
+
+let direction = 'PB', pendingFilter = 'all', logFilter = 'all', adminListTab = 'ingredient';
+function load(k,f){try{const v=localStorage.getItem(k);return v?JSON.parse(v):f;}catch(e){return f;}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+let transfers = load('wh_transfers',[]);
+let log = load('wh_log',[]);
+let items = {ingredient:[...DEFAULT_ITEMS.ingredient],consumable:[...DEFAULT_ITEMS.consumable]};
+save('wh_items',items);
+
+function showTab(name){
+  ['request','pending','log'].forEach(t=>document.getElementById('tab-'+t).style.display=t===name?'':'none');
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['request','pending','log'][i]===name));
+  if(name==='pending')renderPending();
+  if(name==='log')renderLog();
+}
+
+function onCatChange(){
+  const cat=document.getElementById('cat-select').value;
+  const isOther=cat==='other';
+  document.getElementById('item-dropdown-row').style.display=isOther?'none':'';
+  document.getElementById('item-text-row').style.display=isOther?'':'none';
+  if(isOther)document.getElementById('item-text').value='';
+  else renderItemList(cat);
+}
+
+function renderItemList(cat){
+  cat=cat||document.getElementById('cat-select').value;
+  if(cat==='other')return;
+  const list=items[cat]||[];
+  document.getElementById('item-select').innerHTML=list.length?list.map(i=>`<option>${i}</option>`).join(''):'<option disabled>No items — add via Admin</option>';
+}
+
+function swapDirection(){
+  direction=direction==='PB'?'BP':'PB';
+  const from=direction==='PB'?'Plumgarths':'Burneside';
+  const to=direction==='PB'?'Burneside':'Plumgarths';
+  const df=document.getElementById('dir-from'),dt=document.getElementById('dir-to');
+  df.textContent=from;df.className='dir-from '+(direction==='PB'?'loc-p':'loc-b');
+  dt.textContent=to;dt.className='dir-to '+(direction==='PB'?'loc-b':'loc-p');
+}
+
+function submitRequest(){
+  const initials=document.getElementById('initials').value.trim();
+  const cat=document.getElementById('cat-select').value;
+  const qty=parseFloat(document.getElementById('qty-input').value);
+  const notes=document.getElementById('notes-input').value.trim();
+  let item='';
+  if(cat==='other'){item=document.getElementById('item-text').value.trim();if(!item){toast('Please describe what needs to be moved');return;}}
+  else{item=document.getElementById('item-select').value;if(!item){toast('No item selected');return;}}
+  if(!initials){toast('Please enter your initials');return;}
+  if(!qty||qty<=0){toast('Please enter a quantity');return;}
+  const from=direction==='PB'?'Plumgarths':'Burneside';
+  const to=direction==='PB'?'Burneside':'Plumgarths';
+  transfers.push({id:Date.now(),timestamp:new Date().toISOString(),item,qty,cat,from,to,initials,notes,direction});
+  save('wh_transfers',transfers);updateBadge();
+  document.getElementById('qty-input').value='';
+  document.getElementById('notes-input').value='';
+  if(cat==='other')document.getElementById('item-text').value='';
+  toast('Request submitted');
+}
+
+function confirmTransfer(id){
+  const idx=transfers.findIndex(t=>t.id===id);if(idx===-1)return;
+  const t=transfers.splice(idx,1)[0];
+  log.unshift({...t,confirmedAt:new Date().toISOString()});
+  log=log.filter(l=>(Date.now()-new Date(l.confirmedAt).getTime())<30*86400000);
+  save('wh_transfers',transfers);save('wh_log',log);updateBadge();renderPending();toast('Confirmed');
+}
+
+function renderPending(){
+  const el=document.getElementById('pending-list');
+  let list=transfers;
+  if(pendingFilter!=='all')list=list.filter(t=>t.direction===pendingFilter);
+  if(!list.length){el.innerHTML='<div class="empty">No pending requests</div>';return;}
+  el.innerHTML=[...list].reverse().map(t=>{
+    const db=t.direction==='PB'?'badge-pb':'badge-bp';
+    const dl=t.direction==='PB'?'P &#8594; B':'B &#8594; P';
+    const time=new Date(t.timestamp).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+    return `<div class="pending-item"><div class="p-info"><div class="p-name">${t.item}</div><div class="p-meta"><span class="dir-badge ${db}">${dl}</span>${t.cat==='other'?'<span class="dir-badge badge-other">Other</span>':''}<span>${time}</span><span>${t.initials}</span>${t.notes?`<span style="color:#aaa;">${t.notes}</span>`:''}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div class="p-qty">${t.qty}</div><button class="confirm-btn" onclick="confirmTransfer(${t.id})">Confirm &#10003;</button></div></div>`;
+  }).join('');
+}
+
+function renderLog(){
+  const el=document.getElementById('log-list');
+  let list=log;
+  const now=new Date();
+  if(logFilter==='today')list=list.filter(l=>new Date(l.confirmedAt).toDateString()===now.toDateString());
+  else if(logFilter==='week')list=list.filter(l=>new Date(l.confirmedAt)>=new Date(now.getTime()-7*86400000));
+  if(!list.length){el.innerHTML='<div class="empty">No movements yet</div>';return;}
+  el.innerHTML=list.map(l=>{
+    const time=new Date(l.confirmedAt).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+    return `<div class="log-item"><span class="log-time">${time}</span><span class="log-name">${l.item}</span><span class="log-qty">${l.qty}</span><span class="log-dir">${l.from[0]}&#8594;${l.to[0]}</span><span class="log-init">${l.initials}</span></div>`;
+  }).join('');
+}
+
+function setPF(f,btn){pendingFilter=f;document.querySelectorAll('#tab-pending .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderPending();}
+function setLF(f,btn){logFilter=f;document.querySelectorAll('#tab-log .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderLog();}
+function updateBadge(){const n=transfers.length;document.getElementById('pending-badge').innerHTML=n>0?`<span class="count-badge">${n}</span>`:'';}
+
+function openAdminPrompt(){document.getElementById('pin-overlay').classList.remove('hidden');document.getElementById('pin-input').value='';document.getElementById('pin-input').classList.remove('error');setTimeout(()=>document.getElementById('pin-input').focus(),100);}
+function closePin(){document.getElementById('pin-overlay').classList.add('hidden');}
+function checkPin(){
+  const val=document.getElementById('pin-input').value;
+  if(val===PASSCODE){closePin();openAdmin();}
+  else{const inp=document.getElementById('pin-input');inp.classList.add('error');inp.value='';setTimeout(()=>inp.classList.remove('error'),400);toast('Incorrect passcode');}
+}
+function openAdmin(){document.getElementById('main-ui').style.display='none';document.getElementById('admin-ui').style.display='';renderAdminList();}
+function closeAdmin(){document.getElementById('admin-ui').style.display='none';document.getElementById('main-ui').style.display='';renderItemList();}
+function setListTab(tab,btn){adminListTab=tab;document.querySelectorAll('.list-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('new-item-input').value='';renderAdminList();}
+function renderAdminList(){
+  const list=items[adminListTab]||[];
+  const el=document.getElementById('admin-item-list');
+  if(!list.length){el.innerHTML='<div class="empty">No items yet — add one above</div>';return;}
+  el.innerHTML=list.map((item,i)=>`<div class="item-row"><span>${item}</span><button class="remove-btn" onclick="removeItem(${i})">&#10005;</button></div>`).join('');
+}
+function addItem(){
+  const inp=document.getElementById('new-item-input');const val=inp.value.trim();if(!val)return;
+  if(!items[adminListTab])items[adminListTab]=[];
+  if(items[adminListTab].map(i=>i.toLowerCase()).includes(val.toLowerCase())){toast('Item already exists');return;}
+  items[adminListTab].push(val);items[adminListTab].sort((a,b)=>a.localeCompare(b));
+  save('wh_items',items);inp.value='';renderAdminList();toast('Item added');
+}
+function removeItem(idx){items[adminListTab].splice(idx,1);save('wh_items',items);renderAdminList();toast('Item removed');}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200);}
+
+renderItemList('ingredient');updateBadge();
+</script>
+</body>
+</html>

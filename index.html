@@ -15,7 +15,7 @@
     --white: #ffffff;
     --green-soft: #e8f0e4;
     --green-text: #3a5c2a;
-    --green-border: #b0ceA4;
+    --green-border: #b0cea4;
     --amber-soft: #f5ead4;
     --amber-text: #7a4e10;
     --amber-border: #d4b07a;
@@ -30,8 +30,17 @@
   .header { background: var(--ink); border-radius: 14px; padding: 16px 20px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .header-title { font-size: 17px; font-weight: 600; color: var(--white); }
   .header-sub { font-size: 11px; color: var(--khaki); margin-top: 3px; letter-spacing: 0.5px; text-transform: uppercase; }
-  .admin-link { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18); color: var(--cream); border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer; flex-shrink: 0; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #888; flex-shrink: 0; }
+  .sync-dot.live { background: #4caf50; box-shadow: 0 0 0 2px rgba(76,175,80,0.3); }
+  .sync-dot.error { background: var(--red); }
+  .admin-link { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18); color: var(--cream); border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer; }
   .admin-link:hover { background: rgba(255,255,255,0.18); }
+
+  /* Config banner */
+  .config-banner { background: #fff3cd; border: 1px solid #ffc107; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; font-size: 13px; color: #7a5c00; }
+  .config-banner strong { display: block; margin-bottom: 4px; }
+  .config-banner code { background: rgba(0,0,0,0.08); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
 
   .tabs { display: flex; gap: 4px; margin-bottom: 14px; background: rgba(139,132,104,0.15); border-radius: 10px; padding: 4px; }
   .tab { flex: 1; text-align: center; padding: 9px 6px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--khaki-dark); border: none; background: transparent; transition: all 0.15s; }
@@ -56,6 +65,7 @@
   .submit-btn { width: 100%; padding: 13px; background: var(--ink); color: var(--cream); border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 2px; }
   .submit-btn:hover { background: #2e2e2c; }
   .submit-btn:active { transform: scale(0.99); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .pending-list, .log-list { display: flex; flex-direction: column; gap: 8px; }
   .pending-item { background: var(--cream); border-radius: 10px; padding: 13px 14px; display: flex; align-items: center; gap: 12px; border: 0.5px solid var(--border); }
@@ -69,6 +79,7 @@
   .p-qty { font-size: 20px; font-weight: 700; color: var(--ink); }
   .confirm-btn { background: var(--ink); color: var(--cream); border: none; border-radius: 8px; padding: 8px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
   .confirm-btn:hover { background: #2e2e2c; }
+  .confirm-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .log-item { display: flex; align-items: center; gap: 10px; padding: 10px 13px; background: var(--cream); border-radius: 8px; font-size: 13px; border: 0.5px solid var(--border); }
   .log-time { color: var(--khaki); font-size: 11px; min-width: 90px; }
@@ -82,6 +93,7 @@
   .filter-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
 
   .empty { text-align: center; color: var(--khaki); font-size: 13px; padding: 32px 0; }
+  .loading { text-align: center; color: var(--khaki); font-size: 13px; padding: 24px 0; }
   .section-label { font-size: 11px; font-weight: 600; color: var(--khaki); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; }
   .count-badge { display: inline-block; background: var(--red); color: #fff; border-radius: 10px; font-size: 10px; font-weight: 700; padding: 1px 6px; margin-left: 4px; vertical-align: middle; }
 
@@ -129,7 +141,15 @@
         <div class="header-title">Stock Movement</div>
         <div class="header-sub">Lovingly Artisan &nbsp;·&nbsp; Plumgarths &amp; Burneside</div>
       </div>
-      <button class="admin-link" onclick="openAdminPrompt()">&#9881; Admin</button>
+      <div class="header-right">
+        <div class="sync-dot" id="sync-dot" title="Connection status"></div>
+        <button class="admin-link" onclick="openAdminPrompt()">&#9881; Admin</button>
+      </div>
+    </div>
+
+    <div id="config-banner" class="config-banner" style="display:none;">
+      <strong>⚠️ Database not configured</strong>
+      Open this file and replace <code>YOUR_SUPABASE_URL</code> and <code>YOUR_SUPABASE_ANON_KEY</code> with your Supabase project credentials.
     </div>
 
     <div class="tabs">
@@ -178,7 +198,7 @@
           <label>Notes (optional)</label>
           <input type="text" id="notes-input" placeholder="e.g. ref, batch, reason">
         </div>
-        <button class="submit-btn" onclick="submitRequest()">Submit Request</button>
+        <button class="submit-btn" id="submit-btn" onclick="submitRequest()">Submit Request</button>
       </div>
     </div>
 
@@ -190,7 +210,7 @@
           <button class="filter-btn" onclick="setPF('PB',this)">P &#8594; B</button>
           <button class="filter-btn" onclick="setPF('BP',this)">B &#8594; P</button>
         </div>
-        <div class="pending-list" id="pending-list"></div>
+        <div class="pending-list" id="pending-list"><div class="loading">Loading...</div></div>
       </div>
     </div>
 
@@ -202,7 +222,7 @@
           <button class="filter-btn" onclick="setLF('today',this)">Today</button>
           <button class="filter-btn" onclick="setLF('week',this)">This week</button>
         </div>
-        <div class="log-list" id="log-list"></div>
+        <div class="log-list" id="log-list"><div class="loading">Loading...</div></div>
       </div>
     </div>
   </div>
@@ -243,138 +263,322 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// ============================================================
+// CONFIGURATION — replace these two values with your Supabase
+// project URL and anon/public key from Settings → API
+// ============================================================
+const SUPABASE_URL = 'https://rqdquhgeeybzzdndplix.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxZHF1aGdlZXlienpkbmRwbGl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4ODg3MTEsImV4cCI6MjA5MzQ2NDcxMX0.Gmv7iHzeb7JkoM7M14MchrvDykMsunhf9WpGi7kNYxM';
+// ============================================================
+
 const PASSCODE = '2047';
+
 const DEFAULT_ITEMS = {
   ingredient: ["45T Flour","Apples","Baking Powder","Barber Wheat Flour (Lovingly Artisan)","Barley Crystal Malt","Bicarbonate of Soda","Black Pepper","Bran","Breadcrumbs (Lovingly Artisan)","Brown Flour (Lovingly Artisan)","Brown Linseed","Brown Sugar","Butter - 250g Blocks","Caster Sugar","Chillies","Chocolate Drops","Chocolate Stick","Chocomalt","Cinnamon","Coffee","Cold Custard","Cranberries","Cracked Rye","Einkorn Flour","Emmer Flour","Garlic","Golden Linseed","Grand Siecle Flour","Ground Ginger","Gruau Rouge Flour","Honey","Jumbo Oats","Kalamata Olives","Kombucha","Lamination Butter","Lemons","Light Malt Extract","Light Malt Syrup","Liquid Egg","Macpaste","Maldon Salt","Marmite","Milk","Milk Powder","Millet","Mincemeat","Mixed Herbs","Mixed Spice","Molden Salt","Moulbie Brioche Flour","Mrs Kirkhams Cheese","Nelson Wheat Flour (Lovingly Artisan)","Ntense 800 Malt Extract","Orange Pieces","Raisins","Rapeseed Oil","Rolled Oats","Rollright Flour","Rye Flour (Lovingly Artisan)","Saf Pro 300","Saffron","Salt","Semolina","Spelt Flour","Sultanas","Sunflower Seed","Tomatoes","Veg Oil Box","White Sourdough Starter","Wychwood Flour","Yeast"],
   consumable: ["A4 Printer Paper","Bin Bags","Blue Clothes","Blue Rack Bags","Blue Roll","Brown Silicon Sheet - 400 x 320","Chlorine Tablets","Clear Tape","Face Masks","Food, Plant & Oven Cleaner","Glass & Mirror Cleaner","Handled Bags","Heavy Duty Cleaner","Hoover Bag","Kitchen Cleaner","Labels 102 - 64 (Box Labels)","Labels 57 - 32 (Natasha's Law)","Large Boxes","Large Gloves","Large Wax Bags - 460 x 300","Lemon Detergent","Medium Gloves","Mop Head","Oven Cleaner","Oven Gloves","Pallet Wrap","Pastry Wax Bags - 150 x 60","Plastic Bag 20-30","Plastic Bag 24-36","Safety Floor Cleaner","Slicing Bag","Slicing Bag Tape","Small Boxes","Small Gloves","Small Online Boxes","Small Wax Bags - 390 x 175","Thick Bleach","Toilet Cleaner","Toilet Roll","White Silicon 350-525","White Silicon 460-750","White Silicon 525-825","Wood Pellets"]
 };
 
 let direction = 'PB', pendingFilter = 'all', logFilter = 'all', adminListTab = 'ingredient';
-function load(k,f){try{const v=localStorage.getItem(k);return v?JSON.parse(v):f;}catch(e){return f;}}
-function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+let items = {
+  ingredient: [...DEFAULT_ITEMS.ingredient],
+  consumable: [...DEFAULT_ITEMS.consumable]
+};
 
-let transfers = load('wh_transfers',[]);
-let log = load('wh_log',[]);
-let items = {ingredient:[...DEFAULT_ITEMS.ingredient],consumable:[...DEFAULT_ITEMS.consumable]};
-save('wh_items',items);
+// Load item lists from localStorage (admin changes persist locally & per-device)
+try {
+  const saved = localStorage.getItem('wh_items');
+  if (saved) items = JSON.parse(saved);
+} catch(e) {}
 
-function showTab(name){
-  ['request','pending','log'].forEach(t=>document.getElementById('tab-'+t).style.display=t===name?'':'none');
-  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['request','pending','log'][i]===name));
-  if(name==='pending')renderPending();
-  if(name==='log')renderLog();
+// Check config
+const isConfigured = SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_KEY !== 'YOUR_SUPABASE_ANON_KEY';
+if (!isConfigured) document.getElementById('config-banner').style.display = '';
+
+// ---- Supabase API helpers ----
+async function sbFetch(path, options = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': options.prefer || '',
+      ...options.headers
+    },
+    method: options.method || 'GET',
+    body: options.body ? JSON.stringify(options.body) : undefined
+  });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }
 
-function onCatChange(){
-  const cat=document.getElementById('cat-select').value;
-  const isOther=cat==='other';
-  document.getElementById('item-dropdown-row').style.display=isOther?'none':'';
-  document.getElementById('item-text-row').style.display=isOther?'':'none';
-  if(isOther)document.getElementById('item-text').value='';
+async function getTransfers() {
+  return await sbFetch('transfers?order=created_at.asc&select=*');
+}
+
+async function insertTransfer(data) {
+  return await sbFetch('transfers', {
+    method: 'POST',
+    prefer: 'return=representation',
+    body: data
+  });
+}
+
+async function deleteTransfer(id) {
+  return await sbFetch(`transfers?id=eq.${id}`, { method: 'DELETE' });
+}
+
+async function insertLog(data) {
+  return await sbFetch('movement_log', {
+    method: 'POST',
+    prefer: 'return=representation',
+    body: data
+  });
+}
+
+async function getLog(filter) {
+  let query = 'movement_log?order=confirmed_at.desc&select=*';
+  if (filter === 'today') {
+    const start = new Date(); start.setHours(0,0,0,0);
+    query += `&confirmed_at=gte.${start.toISOString()}`;
+  } else if (filter === 'week') {
+    const start = new Date(Date.now() - 7*86400000);
+    query += `&confirmed_at=gte.${start.toISOString()}`;
+  }
+  return await sbFetch(query);
+}
+
+// ---- Real-time polling ----
+let pollInterval = null;
+
+function setConnected(ok) {
+  const dot = document.getElementById('sync-dot');
+  dot.className = 'sync-dot ' + (ok ? 'live' : 'error');
+  dot.title = ok ? 'Connected — live data' : 'Connection error';
+}
+
+function startPolling() {
+  if (!isConfigured) return;
+  loadPending();
+  pollInterval = setInterval(() => {
+    const activeTab = document.querySelector('.tab.active');
+    if (!activeTab) return;
+    const idx = [...document.querySelectorAll('.tab')].indexOf(activeTab);
+    if (idx === 1) loadPending();
+    if (idx === 2) loadLog();
+    updateBadgeFromServer();
+  }, 10000); // poll every 10 seconds
+}
+
+async function updateBadgeFromServer() {
+  try {
+    const data = await getTransfers();
+    const n = data.length;
+    document.getElementById('pending-badge').innerHTML = n > 0 ? `<span class="count-badge">${n}</span>` : '';
+    setConnected(true);
+  } catch(e) { setConnected(false); }
+}
+
+// ---- UI ----
+function showTab(name) {
+  ['request','pending','log'].forEach(t => document.getElementById('tab-'+t).style.display = t===name?'':'none');
+  document.querySelectorAll('.tab').forEach((el,i) => el.classList.toggle('active', ['request','pending','log'][i]===name));
+  if (name==='pending') loadPending();
+  if (name==='log') loadLog();
+}
+
+function onCatChange() {
+  const cat = document.getElementById('cat-select').value;
+  const isOther = cat === 'other';
+  document.getElementById('item-dropdown-row').style.display = isOther ? 'none' : '';
+  document.getElementById('item-text-row').style.display = isOther ? '' : 'none';
+  if (isOther) document.getElementById('item-text').value = '';
   else renderItemList(cat);
 }
 
-function renderItemList(cat){
-  cat=cat||document.getElementById('cat-select').value;
-  if(cat==='other')return;
-  const list=items[cat]||[];
-  document.getElementById('item-select').innerHTML=list.length?list.map(i=>`<option>${i}</option>`).join(''):'<option disabled>No items — add via Admin</option>';
+function renderItemList(cat) {
+  cat = cat || document.getElementById('cat-select').value;
+  if (cat === 'other') return;
+  const list = items[cat] || [];
+  document.getElementById('item-select').innerHTML = list.length
+    ? list.map(i => `<option>${i}</option>`).join('')
+    : '<option disabled>No items — add via Admin</option>';
 }
 
-function swapDirection(){
-  direction=direction==='PB'?'BP':'PB';
-  const from=direction==='PB'?'Plumgarths':'Burneside';
-  const to=direction==='PB'?'Burneside':'Plumgarths';
-  const df=document.getElementById('dir-from'),dt=document.getElementById('dir-to');
-  df.textContent=from;df.className='dir-from '+(direction==='PB'?'loc-p':'loc-b');
-  dt.textContent=to;dt.className='dir-to '+(direction==='PB'?'loc-b':'loc-p');
+function swapDirection() {
+  direction = direction === 'PB' ? 'BP' : 'PB';
+  const from = direction === 'PB' ? 'Plumgarths' : 'Burneside';
+  const to   = direction === 'PB' ? 'Burneside'  : 'Plumgarths';
+  const df = document.getElementById('dir-from'), dt = document.getElementById('dir-to');
+  df.textContent = from; df.className = 'dir-from ' + (direction==='PB'?'loc-p':'loc-b');
+  dt.textContent = to;   dt.className = 'dir-to '   + (direction==='PB'?'loc-b':'loc-p');
 }
 
-function submitRequest(){
-  const initials=document.getElementById('initials').value.trim();
-  const cat=document.getElementById('cat-select').value;
-  const qty=parseFloat(document.getElementById('qty-input').value);
-  const notes=document.getElementById('notes-input').value.trim();
-  let item='';
-  if(cat==='other'){item=document.getElementById('item-text').value.trim();if(!item){toast('Please describe what needs to be moved');return;}}
-  else{item=document.getElementById('item-select').value;if(!item){toast('No item selected');return;}}
-  if(!initials){toast('Please enter your initials');return;}
-  if(!qty||qty<=0){toast('Please enter a quantity');return;}
-  const from=direction==='PB'?'Plumgarths':'Burneside';
-  const to=direction==='PB'?'Burneside':'Plumgarths';
-  transfers.push({id:Date.now(),timestamp:new Date().toISOString(),item,qty,cat,from,to,initials,notes,direction});
-  save('wh_transfers',transfers);updateBadge();
-  document.getElementById('qty-input').value='';
-  document.getElementById('notes-input').value='';
-  if(cat==='other')document.getElementById('item-text').value='';
-  toast('Request submitted');
+async function submitRequest() {
+  const initials = document.getElementById('initials').value.trim();
+  const cat = document.getElementById('cat-select').value;
+  const qty = parseFloat(document.getElementById('qty-input').value);
+  const notes = document.getElementById('notes-input').value.trim();
+  let item = '';
+  if (cat === 'other') {
+    item = document.getElementById('item-text').value.trim();
+    if (!item) { toast('Please describe what needs to be moved'); return; }
+  } else {
+    item = document.getElementById('item-select').value;
+    if (!item) { toast('No item selected'); return; }
+  }
+  if (!initials) { toast('Please enter your initials'); return; }
+  if (!qty || qty <= 0) { toast('Please enter a quantity'); return; }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  try {
+    await insertTransfer({
+      item, qty, cat,
+      from_location: direction === 'PB' ? 'Plumgarths' : 'Burneside',
+      to_location:   direction === 'PB' ? 'Burneside'  : 'Plumgarths',
+      direction, initials, notes
+    });
+    document.getElementById('qty-input').value = '';
+    document.getElementById('notes-input').value = '';
+    if (cat === 'other') document.getElementById('item-text').value = '';
+    toast('Request submitted');
+    setConnected(true);
+    updateBadgeFromServer();
+  } catch(e) {
+    toast('Error — check connection');
+    setConnected(false);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Submit Request';
+  }
 }
 
-function confirmTransfer(id){
-  const idx=transfers.findIndex(t=>t.id===id);if(idx===-1)return;
-  const t=transfers.splice(idx,1)[0];
-  log.unshift({...t,confirmedAt:new Date().toISOString()});
-  log=log.filter(l=>(Date.now()-new Date(l.confirmedAt).getTime())<30*86400000);
-  save('wh_transfers',transfers);save('wh_log',log);updateBadge();renderPending();toast('Confirmed');
+async function confirmTransfer(id) {
+  const btn = document.querySelector(`[data-confirm="${id}"]`);
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+  try {
+    // Get the transfer
+    const data = await sbFetch(`transfers?id=eq.${id}&select=*`);
+    if (!data || !data[0]) return;
+    const t = data[0];
+    // Move to log
+    await insertLog({
+      item: t.item, qty: t.qty, cat: t.cat,
+      from_location: t.from_location, to_location: t.to_location,
+      direction: t.direction, initials: t.initials, notes: t.notes
+    });
+    // Delete from pending
+    await deleteTransfer(id);
+    toast('Confirmed');
+    setConnected(true);
+    loadPending();
+    updateBadgeFromServer();
+  } catch(e) {
+    toast('Error — check connection');
+    setConnected(false);
+    if (btn) { btn.disabled = false; btn.textContent = 'Confirm ✓'; }
+  }
 }
 
-function renderPending(){
-  const el=document.getElementById('pending-list');
-  let list=transfers;
-  if(pendingFilter!=='all')list=list.filter(t=>t.direction===pendingFilter);
-  if(!list.length){el.innerHTML='<div class="empty">No pending requests</div>';return;}
-  el.innerHTML=[...list].reverse().map(t=>{
-    const db=t.direction==='PB'?'badge-pb':'badge-bp';
-    const dl=t.direction==='PB'?'P &#8594; B':'B &#8594; P';
-    const time=new Date(t.timestamp).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-    return `<div class="pending-item"><div class="p-info"><div class="p-name">${t.item}</div><div class="p-meta"><span class="dir-badge ${db}">${dl}</span>${t.cat==='other'?'<span class="dir-badge badge-other">Other</span>':''}<span>${time}</span><span>${t.initials}</span>${t.notes?`<span style="color:#aaa;">${t.notes}</span>`:''}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div class="p-qty">${t.qty}</div><button class="confirm-btn" onclick="confirmTransfer(${t.id})">Confirm &#10003;</button></div></div>`;
-  }).join('');
+async function loadPending() {
+  const el = document.getElementById('pending-list');
+  try {
+    let data = await getTransfers();
+    setConnected(true);
+    if (pendingFilter !== 'all') data = data.filter(t => t.direction === pendingFilter);
+    document.getElementById('pending-badge').innerHTML = data.length > 0 ? `<span class="count-badge">${data.length}</span>` : '';
+    if (!data.length) { el.innerHTML = '<div class="empty">No pending requests</div>'; return; }
+    el.innerHTML = [...data].reverse().map(t => {
+      const db = t.direction==='PB'?'badge-pb':'badge-bp';
+      const dl = t.direction==='PB'?'P &#8594; B':'B &#8594; P';
+      const time = new Date(t.created_at).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+      return `<div class="pending-item">
+        <div class="p-info">
+          <div class="p-name">${t.item}</div>
+          <div class="p-meta">
+            <span class="dir-badge ${db}">${dl}</span>
+            ${t.cat==='other'?'<span class="dir-badge badge-other">Other</span>':''}
+            <span>${time}</span><span>${t.initials}</span>
+            ${t.notes?`<span style="color:#aaa;">${t.notes}</span>`:''}
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <div class="p-qty">${t.qty}</div>
+          <button class="confirm-btn" data-confirm="${t.id}" onclick="confirmTransfer(${t.id})">Confirm &#10003;</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    setConnected(false);
+    el.innerHTML = '<div class="empty">Could not load — check connection</div>';
+  }
 }
 
-function renderLog(){
-  const el=document.getElementById('log-list');
-  let list=log;
-  const now=new Date();
-  if(logFilter==='today')list=list.filter(l=>new Date(l.confirmedAt).toDateString()===now.toDateString());
-  else if(logFilter==='week')list=list.filter(l=>new Date(l.confirmedAt)>=new Date(now.getTime()-7*86400000));
-  if(!list.length){el.innerHTML='<div class="empty">No movements yet</div>';return;}
-  el.innerHTML=list.map(l=>{
-    const time=new Date(l.confirmedAt).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-    return `<div class="log-item"><span class="log-time">${time}</span><span class="log-name">${l.item}</span><span class="log-qty">${l.qty}</span><span class="log-dir">${l.from[0]}&#8594;${l.to[0]}</span><span class="log-init">${l.initials}</span></div>`;
-  }).join('');
+async function loadLog() {
+  const el = document.getElementById('log-list');
+  try {
+    const data = await getLog(logFilter);
+    setConnected(true);
+    if (!data.length) { el.innerHTML = '<div class="empty">No movements yet</div>'; return; }
+    el.innerHTML = data.map(l => {
+      const time = new Date(l.confirmed_at).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+      return `<div class="log-item">
+        <span class="log-time">${time}</span>
+        <span class="log-name">${l.item}</span>
+        <span class="log-qty">${l.qty}</span>
+        <span class="log-dir">${l.from_location[0]}&#8594;${l.to_location[0]}</span>
+        <span class="log-init">${l.initials}</span>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    setConnected(false);
+    el.innerHTML = '<div class="empty">Could not load — check connection</div>';
+  }
 }
 
-function setPF(f,btn){pendingFilter=f;document.querySelectorAll('#tab-pending .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderPending();}
-function setLF(f,btn){logFilter=f;document.querySelectorAll('#tab-log .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderLog();}
-function updateBadge(){const n=transfers.length;document.getElementById('pending-badge').innerHTML=n>0?`<span class="count-badge">${n}</span>`:'';}
+function setPF(f,btn) { pendingFilter=f; document.querySelectorAll('#tab-pending .filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); loadPending(); }
+function setLF(f,btn) { logFilter=f; document.querySelectorAll('#tab-log .filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); loadLog(); }
 
-function openAdminPrompt(){document.getElementById('pin-overlay').classList.remove('hidden');document.getElementById('pin-input').value='';document.getElementById('pin-input').classList.remove('error');setTimeout(()=>document.getElementById('pin-input').focus(),100);}
-function closePin(){document.getElementById('pin-overlay').classList.add('hidden');}
-function checkPin(){
-  const val=document.getElementById('pin-input').value;
-  if(val===PASSCODE){closePin();openAdmin();}
-  else{const inp=document.getElementById('pin-input');inp.classList.add('error');inp.value='';setTimeout(()=>inp.classList.remove('error'),400);toast('Incorrect passcode');}
+// ---- Admin ----
+function openAdminPrompt() { document.getElementById('pin-overlay').classList.remove('hidden'); document.getElementById('pin-input').value=''; document.getElementById('pin-input').classList.remove('error'); setTimeout(()=>document.getElementById('pin-input').focus(),100); }
+function closePin() { document.getElementById('pin-overlay').classList.add('hidden'); }
+function checkPin() {
+  const val = document.getElementById('pin-input').value;
+  if (val === PASSCODE) { closePin(); openAdmin(); }
+  else { const inp=document.getElementById('pin-input'); inp.classList.add('error'); inp.value=''; setTimeout(()=>inp.classList.remove('error'),400); toast('Incorrect passcode'); }
 }
-function openAdmin(){document.getElementById('main-ui').style.display='none';document.getElementById('admin-ui').style.display='';renderAdminList();}
-function closeAdmin(){document.getElementById('admin-ui').style.display='none';document.getElementById('main-ui').style.display='';renderItemList();}
-function setListTab(tab,btn){adminListTab=tab;document.querySelectorAll('.list-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('new-item-input').value='';renderAdminList();}
-function renderAdminList(){
-  const list=items[adminListTab]||[];
-  const el=document.getElementById('admin-item-list');
-  if(!list.length){el.innerHTML='<div class="empty">No items yet — add one above</div>';return;}
-  el.innerHTML=list.map((item,i)=>`<div class="item-row"><span>${item}</span><button class="remove-btn" onclick="removeItem(${i})">&#10005;</button></div>`).join('');
+function openAdmin() { document.getElementById('main-ui').style.display='none'; document.getElementById('admin-ui').style.display=''; renderAdminList(); }
+function closeAdmin() { document.getElementById('admin-ui').style.display='none'; document.getElementById('main-ui').style.display=''; renderItemList(); }
+function setListTab(tab,btn) { adminListTab=tab; document.querySelectorAll('.list-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.getElementById('new-item-input').value=''; renderAdminList(); }
+function renderAdminList() {
+  const list = items[adminListTab]||[];
+  const el = document.getElementById('admin-item-list');
+  if (!list.length) { el.innerHTML='<div class="empty">No items yet — add one above</div>'; return; }
+  el.innerHTML = list.map((item,i) => `<div class="item-row"><span>${item}</span><button class="remove-btn" onclick="removeItem(${i})">&#10005;</button></div>`).join('');
 }
-function addItem(){
-  const inp=document.getElementById('new-item-input');const val=inp.value.trim();if(!val)return;
-  if(!items[adminListTab])items[adminListTab]=[];
-  if(items[adminListTab].map(i=>i.toLowerCase()).includes(val.toLowerCase())){toast('Item already exists');return;}
-  items[adminListTab].push(val);items[adminListTab].sort((a,b)=>a.localeCompare(b));
-  save('wh_items',items);inp.value='';renderAdminList();toast('Item added');
+function addItem() {
+  const inp = document.getElementById('new-item-input'); const val=inp.value.trim(); if(!val)return;
+  if (!items[adminListTab]) items[adminListTab]=[];
+  if (items[adminListTab].map(i=>i.toLowerCase()).includes(val.toLowerCase())) { toast('Item already exists'); return; }
+  items[adminListTab].push(val); items[adminListTab].sort((a,b)=>a.localeCompare(b));
+  localStorage.setItem('wh_items', JSON.stringify(items));
+  inp.value=''; renderAdminList(); toast('Item added');
 }
-function removeItem(idx){items[adminListTab].splice(idx,1);save('wh_items',items);renderAdminList();toast('Item removed');}
-function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200);}
+function removeItem(idx) {
+  items[adminListTab].splice(idx,1);
+  localStorage.setItem('wh_items', JSON.stringify(items));
+  renderAdminList(); toast('Item removed');
+}
 
-renderItemList('ingredient');updateBadge();
+function toast(msg) { const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2200); }
+
+// ---- Init ----
+renderItemList('ingredient');
+updateBadgeFromServer();
+startPolling();
 </script>
 </body>
 </html>

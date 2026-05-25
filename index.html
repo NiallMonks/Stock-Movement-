@@ -37,7 +37,6 @@
   .admin-link { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18); color: var(--cream); border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer; }
   .admin-link:hover { background: rgba(255,255,255,0.18); }
 
-  /* Config banner */
   .config-banner { background: #fff3cd; border: 1px solid #ffc107; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; font-size: 13px; color: #7a5c00; }
   .config-banner strong { display: block; margin-bottom: 4px; }
   .config-banner code { background: rgba(0,0,0,0.08); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
@@ -53,6 +52,7 @@
   .form-row input, .form-row select { width: 100%; padding: 10px 12px; border: 1px solid var(--border-strong); border-radius: 8px; font-size: 14px; background: var(--cream); color: var(--ink); outline: none; appearance: none; -webkit-appearance: none; }
   .form-row input:focus, .form-row select:focus { border-color: var(--khaki); box-shadow: 0 0 0 3px rgba(139,132,104,0.15); background: var(--white); }
   .other-hint { font-size: 12px; color: var(--khaki); margin-top: 5px; }
+  .pack-hint { display: inline-block; margin-top: 6px; font-size: 12px; font-weight: 500; color: var(--khaki-dark); background: var(--cream); border: 0.5px solid var(--border-strong); border-radius: 6px; padding: 4px 10px; }
 
   .direction-bar { display: flex; align-items: center; gap: 8px; }
   .dir-from, .dir-to { flex: 1; text-align: center; padding: 9px 10px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1.5px solid transparent; }
@@ -64,7 +64,6 @@
 
   .submit-btn { width: 100%; padding: 13px; background: var(--ink); color: var(--cream); border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 2px; }
   .submit-btn:hover { background: #2e2e2c; }
-  .submit-btn:active { transform: scale(0.99); }
   .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .pending-list, .log-list { display: flex; flex-direction: column; gap: 8px; }
@@ -118,15 +117,27 @@
   .list-tabs { display: flex; gap: 5px; margin-bottom: 14px; background: var(--cream); border-radius: 8px; padding: 3px; border: 0.5px solid var(--border); }
   .list-tab { flex: 1; text-align: center; padding: 7px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--khaki-dark); border: none; background: transparent; }
   .list-tab.active { background: var(--white); color: var(--ink); box-shadow: 0 1px 3px rgba(26,26,24,0.1); }
-  .add-row { display: flex; gap: 8px; margin-bottom: 14px; }
+  .add-row { display: flex; gap: 8px; margin-bottom: 6px; }
   .add-row input { flex: 1; padding: 9px 12px; border: 1px solid var(--border-strong); border-radius: 8px; font-size: 14px; outline: none; background: var(--cream); color: var(--ink); }
   .add-row input:focus { border-color: var(--khaki); background: var(--white); }
   .add-row button { background: var(--ink); color: var(--cream); border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .add-pack-label { font-size: 11px; color: var(--khaki); margin-bottom: 6px; display: block; }
+  .add-pack-row { display: flex; gap: 8px; margin-bottom: 14px; }
+  .add-pack-row input { flex: 1; padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: 8px; font-size: 13px; outline: none; background: var(--cream); color: var(--khaki-dark); }
+  .add-pack-row input:focus { border-color: var(--khaki); background: var(--white); }
   .item-list { display: flex; flex-direction: column; gap: 5px; max-height: 420px; overflow-y: auto; }
-  .item-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--cream); border-radius: 8px; border: 0.5px solid var(--border); }
-  .item-row span { flex: 1; font-size: 13px; color: var(--ink); }
+  .item-row { display: flex; align-items: center; gap: 8px; padding: 9px 12px; background: var(--cream); border-radius: 8px; border: 0.5px solid var(--border); }
+  .item-row-info { flex: 1; min-width: 0; }
+  .item-row-name { font-size: 13px; color: var(--ink); font-weight: 500; }
+  .item-row-pack { font-size: 11px; color: var(--khaki); margin-top: 1px; }
+  .edit-pack-btn { background: none; border: 1px solid var(--border-strong); border-radius: 6px; color: var(--khaki-dark); cursor: pointer; font-size: 11px; padding: 3px 8px; white-space: nowrap; flex-shrink: 0; }
+  .edit-pack-btn:hover { background: var(--white); }
   .remove-btn { background: none; border: none; color: #bbb; cursor: pointer; font-size: 16px; padding: 2px 6px; border-radius: 5px; line-height: 1; flex-shrink: 0; }
   .remove-btn:hover { background: #fce8e8; color: var(--red); }
+  .pack-edit-row { display: flex; gap: 6px; margin-top: 6px; }
+  .pack-edit-row input { flex: 1; padding: 5px 8px; border: 1px solid var(--khaki); border-radius: 6px; font-size: 12px; outline: none; background: var(--white); }
+  .pack-save { background: var(--ink); color: var(--cream); border: none; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .pack-cancel-btn { background: var(--cream); border: 1px solid var(--border-strong); color: var(--khaki-dark); padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
 
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--cream); padding: 10px 22px; border-radius: 10px; font-size: 13px; font-weight: 500; opacity: 0; transition: opacity 0.25s; pointer-events: none; z-index: 999; white-space: nowrap; }
   .toast.show { opacity: 1; }
@@ -139,7 +150,7 @@
     <div class="header">
       <div>
         <div class="header-title">Stock Movement</div>
-        <div class="header-sub">Lovingly Artisan &nbsp;·&nbsp; Plumgarths &amp; Burneside</div>
+        <div class="header-sub">Lovingly Artisan &nbsp;&middot;&nbsp; Plumgarths &amp; Burneside</div>
       </div>
       <div class="header-right">
         <div class="sync-dot" id="sync-dot" title="Connection status"></div>
@@ -148,8 +159,8 @@
     </div>
 
     <div id="config-banner" class="config-banner" style="display:none;">
-      <strong>⚠️ Database not configured</strong>
-      Open this file and replace <code>YOUR_SUPABASE_URL</code> and <code>YOUR_SUPABASE_ANON_KEY</code> with your Supabase project credentials.
+      <strong>&#9888;&#65039; Database not configured</strong>
+      Replace <code>https://rqdquhgeeybzzdndplix.supabase.co</code> and <code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxZHF1aGdlZXlienpkbmRwbGl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4ODg3MTEsImV4cCI6MjA5MzQ2NDcxMX0.Gmv7iHzeb7JkoM7M14MchrvDykMsunhf9WpGi7kNYxM</code> with your Supabase credentials.
     </div>
 
     <div class="tabs">
@@ -183,7 +194,8 @@
         </div>
         <div id="item-dropdown-row" class="form-row">
           <label>Item</label>
-          <select id="item-select"></select>
+          <select id="item-select" onchange="showPackHint()"></select>
+          <span class="pack-hint" id="pack-hint" style="display:none;"></span>
         </div>
         <div id="item-text-row" class="form-row" style="display:none;">
           <label>Item description</label>
@@ -239,8 +251,12 @@
         <button class="list-tab" onclick="setListTab('consumable',this)">Consumables</button>
       </div>
       <div class="add-row">
-        <input type="text" id="new-item-input" placeholder="Add new item..." onkeydown="if(event.key==='Enter')addItem()">
+        <input type="text" id="new-item-input" placeholder="Item name..." onkeydown="if(event.key==='Enter')document.getElementById('new-pack-input').focus()">
         <button onclick="addItem()">+ Add</button>
+      </div>
+      <label class="add-pack-label">Pack size (optional) &mdash; shown to staff on the request form</label>
+      <div class="add-pack-row">
+        <input type="text" id="new-pack-input" placeholder="e.g. 25kg bags, 12 per case..." onkeydown="if(event.key==='Enter')addItem()">
       </div>
       <div class="item-list" id="admin-item-list"></div>
     </div>
@@ -263,14 +279,8 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ============================================================
-// CONFIGURATION — replace these two values with your Supabase
-// project URL and anon/public key from Settings → API
-// ============================================================
-const SUPABASE_URL = 'https://rqdquhgeeybzzdndplix.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxZHF1aGdlZXlienpkbmRwbGl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4ODg3MTEsImV4cCI6MjA5MzQ2NDcxMX0.Gmv7iHzeb7JkoM7M14MchrvDykMsunhf9WpGi7kNYxM';
-// ============================================================
-
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
 const PASSCODE = '2047';
 
 const DEFAULT_ITEMS = {
@@ -279,303 +289,230 @@ const DEFAULT_ITEMS = {
 };
 
 let direction = 'PB', pendingFilter = 'all', logFilter = 'all', adminListTab = 'ingredient';
-let items = {
-  ingredient: [...DEFAULT_ITEMS.ingredient],
-  consumable: [...DEFAULT_ITEMS.consumable]
-};
+function loadStorage(k,f){try{const v=localStorage.getItem(k);return v?JSON.parse(v):f;}catch(e){return f;}}
+function saveStorage(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
-// Load item lists from localStorage (admin changes persist locally & per-device)
-try {
-  const saved = localStorage.getItem('wh_items');
-  if (saved) items = JSON.parse(saved);
-} catch(e) {}
+let items = loadStorage('wh_items',{ingredient:[...DEFAULT_ITEMS.ingredient],consumable:[...DEFAULT_ITEMS.consumable]});
+let packSizes = loadStorage('wh_pack_sizes',{ingredient:{},consumable:{}});
 
-// Check config
 const isConfigured = SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_KEY !== 'YOUR_SUPABASE_ANON_KEY';
 if (!isConfigured) document.getElementById('config-banner').style.display = '';
 
-// ---- Supabase API helpers ----
-async function sbFetch(path, options = {}) {
+async function sbFetch(path, opts={}) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    headers: {
-      'apikey': SUPABASE_KEY,
-      'Authorization': `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-      'Prefer': options.prefer || '',
-      ...options.headers
-    },
-    method: options.method || 'GET',
-    body: options.body ? JSON.stringify(options.body) : undefined
+    headers: {'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json','Prefer':opts.prefer||'',...(opts.headers||{})},
+    method: opts.method||'GET', body: opts.body?JSON.stringify(opts.body):undefined
   });
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-  const text = await res.text();
-  return text ? JSON.parse(text) : null;
+  if (!res.ok) throw new Error(res.status);
+  const t = await res.text(); return t?JSON.parse(t):null;
+}
+async function getTransfers(){return sbFetch('transfers?order=created_at.asc&select=*');}
+async function insertTransfer(d){return sbFetch('transfers',{method:'POST',prefer:'return=representation',body:d});}
+async function deleteTransfer(id){return sbFetch(`transfers?id=eq.${id}`,{method:'DELETE'});}
+async function insertLog(d){return sbFetch('movement_log',{method:'POST',prefer:'return=representation',body:d});}
+async function getLog(f){
+  let q='movement_log?order=confirmed_at.desc&select=*';
+  if(f==='today'){const s=new Date();s.setHours(0,0,0,0);q+=`&confirmed_at=gte.${s.toISOString()}`;}
+  else if(f==='week'){q+=`&confirmed_at=gte.${new Date(Date.now()-7*86400000).toISOString()}`;}
+  return sbFetch(q);
 }
 
-async function getTransfers() {
-  return await sbFetch('transfers?order=created_at.asc&select=*');
-}
+function setConnected(ok){const d=document.getElementById('sync-dot');d.className='sync-dot '+(ok?'live':'error');d.title=ok?'Connected - live data':'Connection error';}
 
-async function insertTransfer(data) {
-  return await sbFetch('transfers', {
-    method: 'POST',
-    prefer: 'return=representation',
-    body: data
-  });
-}
-
-async function deleteTransfer(id) {
-  return await sbFetch(`transfers?id=eq.${id}`, { method: 'DELETE' });
-}
-
-async function insertLog(data) {
-  return await sbFetch('movement_log', {
-    method: 'POST',
-    prefer: 'return=representation',
-    body: data
-  });
-}
-
-async function getLog(filter) {
-  let query = 'movement_log?order=confirmed_at.desc&select=*';
-  if (filter === 'today') {
-    const start = new Date(); start.setHours(0,0,0,0);
-    query += `&confirmed_at=gte.${start.toISOString()}`;
-  } else if (filter === 'week') {
-    const start = new Date(Date.now() - 7*86400000);
-    query += `&confirmed_at=gte.${start.toISOString()}`;
-  }
-  return await sbFetch(query);
-}
-
-// ---- Real-time polling ----
-let pollInterval = null;
-
-function setConnected(ok) {
-  const dot = document.getElementById('sync-dot');
-  dot.className = 'sync-dot ' + (ok ? 'live' : 'error');
-  dot.title = ok ? 'Connected — live data' : 'Connection error';
-}
-
-function startPolling() {
-  if (!isConfigured) return;
-  loadPending();
-  pollInterval = setInterval(() => {
-    const activeTab = document.querySelector('.tab.active');
-    if (!activeTab) return;
-    const idx = [...document.querySelectorAll('.tab')].indexOf(activeTab);
-    if (idx === 1) loadPending();
-    if (idx === 2) loadLog();
+function startPolling(){
+  if(!isConfigured)return;
+  updateBadgeFromServer();
+  setInterval(()=>{
+    const idx=[...document.querySelectorAll('.tab')].findIndex(t=>t.classList.contains('active'));
+    if(idx===1)loadPending();
+    if(idx===2)loadLog();
     updateBadgeFromServer();
-  }, 10000); // poll every 10 seconds
+  },10000);
 }
 
-async function updateBadgeFromServer() {
-  try {
-    const data = await getTransfers();
-    const n = data.length;
-    document.getElementById('pending-badge').innerHTML = n > 0 ? `<span class="count-badge">${n}</span>` : '';
-    setConnected(true);
-  } catch(e) { setConnected(false); }
+async function updateBadgeFromServer(){
+  try{const d=await getTransfers();document.getElementById('pending-badge').innerHTML=d.length>0?`<span class="count-badge">${d.length}</span>`:'';setConnected(true);}
+  catch(e){setConnected(false);}
 }
 
-// ---- UI ----
-function showTab(name) {
-  ['request','pending','log'].forEach(t => document.getElementById('tab-'+t).style.display = t===name?'':'none');
-  document.querySelectorAll('.tab').forEach((el,i) => el.classList.toggle('active', ['request','pending','log'][i]===name));
-  if (name==='pending') loadPending();
-  if (name==='log') loadLog();
+function showTab(name){
+  ['request','pending','log'].forEach(t=>document.getElementById('tab-'+t).style.display=t===name?'':'none');
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['request','pending','log'][i]===name));
+  if(name==='pending')loadPending();
+  if(name==='log')loadLog();
 }
 
-function onCatChange() {
-  const cat = document.getElementById('cat-select').value;
-  const isOther = cat === 'other';
-  document.getElementById('item-dropdown-row').style.display = isOther ? 'none' : '';
-  document.getElementById('item-text-row').style.display = isOther ? '' : 'none';
-  if (isOther) document.getElementById('item-text').value = '';
+function onCatChange(){
+  const cat=document.getElementById('cat-select').value;
+  const isOther=cat==='other';
+  document.getElementById('item-dropdown-row').style.display=isOther?'none':'';
+  document.getElementById('item-text-row').style.display=isOther?'':'none';
+  document.getElementById('pack-hint').style.display='none';
+  if(isOther)document.getElementById('item-text').value='';
   else renderItemList(cat);
 }
 
-function renderItemList(cat) {
-  cat = cat || document.getElementById('cat-select').value;
-  if (cat === 'other') return;
-  const list = items[cat] || [];
-  document.getElementById('item-select').innerHTML = list.length
-    ? list.map(i => `<option>${i}</option>`).join('')
-    : '<option disabled>No items — add via Admin</option>';
+function showPackHint(){
+  const cat=document.getElementById('cat-select').value;
+  if(cat==='other')return;
+  const item=document.getElementById('item-select').value;
+  const pack=(packSizes[cat]||{})[item];
+  const hint=document.getElementById('pack-hint');
+  if(pack){hint.textContent='Pack size: '+pack;hint.style.display='';}
+  else{hint.style.display='none';}
 }
 
-function swapDirection() {
-  direction = direction === 'PB' ? 'BP' : 'PB';
-  const from = direction === 'PB' ? 'Plumgarths' : 'Burneside';
-  const to   = direction === 'PB' ? 'Burneside'  : 'Plumgarths';
-  const df = document.getElementById('dir-from'), dt = document.getElementById('dir-to');
-  df.textContent = from; df.className = 'dir-from ' + (direction==='PB'?'loc-p':'loc-b');
-  dt.textContent = to;   dt.className = 'dir-to '   + (direction==='PB'?'loc-b':'loc-p');
+function renderItemList(cat){
+  cat=cat||document.getElementById('cat-select').value;
+  if(cat==='other')return;
+  const list=items[cat]||[];
+  const ps=packSizes[cat]||{};
+  document.getElementById('item-select').innerHTML=list.length
+    ?list.map(name=>{const pack=ps[name]?` \u2014 ${ps[name]}`:'';return `<option value="${name}">${name}${pack}</option>`;}).join('')
+    :'<option disabled>No items - add via Admin</option>';
+  showPackHint();
 }
 
-async function submitRequest() {
-  const initials = document.getElementById('initials').value.trim();
-  const cat = document.getElementById('cat-select').value;
-  const qty = parseFloat(document.getElementById('qty-input').value);
-  const notes = document.getElementById('notes-input').value.trim();
-  let item = '';
-  if (cat === 'other') {
-    item = document.getElementById('item-text').value.trim();
-    if (!item) { toast('Please describe what needs to be moved'); return; }
-  } else {
-    item = document.getElementById('item-select').value;
-    if (!item) { toast('No item selected'); return; }
-  }
-  if (!initials) { toast('Please enter your initials'); return; }
-  if (!qty || qty <= 0) { toast('Please enter a quantity'); return; }
-
-  const btn = document.getElementById('submit-btn');
-  btn.disabled = true;
-  btn.textContent = 'Submitting...';
-
-  try {
-    await insertTransfer({
-      item, qty, cat,
-      from_location: direction === 'PB' ? 'Plumgarths' : 'Burneside',
-      to_location:   direction === 'PB' ? 'Burneside'  : 'Plumgarths',
-      direction, initials, notes
-    });
-    document.getElementById('qty-input').value = '';
-    document.getElementById('notes-input').value = '';
-    if (cat === 'other') document.getElementById('item-text').value = '';
-    toast('Request submitted');
-    setConnected(true);
-    updateBadgeFromServer();
-  } catch(e) {
-    toast('Error — check connection');
-    setConnected(false);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Submit Request';
-  }
+function swapDirection(){
+  direction=direction==='PB'?'BP':'PB';
+  const from=direction==='PB'?'Plumgarths':'Burneside',to=direction==='PB'?'Burneside':'Plumgarths';
+  const df=document.getElementById('dir-from'),dt=document.getElementById('dir-to');
+  df.textContent=from;df.className='dir-from '+(direction==='PB'?'loc-p':'loc-b');
+  dt.textContent=to;dt.className='dir-to '+(direction==='PB'?'loc-b':'loc-p');
 }
 
-async function confirmTransfer(id) {
-  const btn = document.querySelector(`[data-confirm="${id}"]`);
-  if (btn) { btn.disabled = true; btn.textContent = '...'; }
-  try {
-    // Get the transfer
-    const data = await sbFetch(`transfers?id=eq.${id}&select=*`);
-    if (!data || !data[0]) return;
-    const t = data[0];
-    // Move to log
-    await insertLog({
-      item: t.item, qty: t.qty, cat: t.cat,
-      from_location: t.from_location, to_location: t.to_location,
-      direction: t.direction, initials: t.initials, notes: t.notes
-    });
-    // Delete from pending
+async function submitRequest(){
+  const initials=document.getElementById('initials').value.trim();
+  const cat=document.getElementById('cat-select').value;
+  const qty=parseFloat(document.getElementById('qty-input').value);
+  const notes=document.getElementById('notes-input').value.trim();
+  let item='';
+  if(cat==='other'){item=document.getElementById('item-text').value.trim();if(!item){toast('Please describe what needs to be moved');return;}}
+  else{item=document.getElementById('item-select').value;if(!item){toast('No item selected');return;}}
+  if(!initials){toast('Please enter your initials');return;}
+  if(!qty||qty<=0){toast('Please enter a quantity');return;}
+  const btn=document.getElementById('submit-btn');btn.disabled=true;btn.textContent='Submitting...';
+  try{
+    await insertTransfer({item,qty,cat,from_location:direction==='PB'?'Plumgarths':'Burneside',to_location:direction==='PB'?'Burneside':'Plumgarths',direction,initials,notes});
+    document.getElementById('qty-input').value='';document.getElementById('notes-input').value='';
+    if(cat==='other')document.getElementById('item-text').value='';
+    toast('Request submitted');setConnected(true);updateBadgeFromServer();
+  }catch(e){toast('Error - check connection');setConnected(false);}
+  finally{btn.disabled=false;btn.textContent='Submit Request';}
+}
+
+async function confirmTransfer(id){
+  const btn=document.querySelector(`[data-confirm="${id}"]`);
+  if(btn){btn.disabled=true;btn.textContent='...';}
+  try{
+    const data=await sbFetch(`transfers?id=eq.${id}&select=*`);
+    if(!data||!data[0])return;
+    const t=data[0];
+    await insertLog({item:t.item,qty:t.qty,cat:t.cat,from_location:t.from_location,to_location:t.to_location,direction:t.direction,initials:t.initials,notes:t.notes});
     await deleteTransfer(id);
-    toast('Confirmed');
-    setConnected(true);
-    loadPending();
-    updateBadgeFromServer();
-  } catch(e) {
-    toast('Error — check connection');
-    setConnected(false);
-    if (btn) { btn.disabled = false; btn.textContent = 'Confirm ✓'; }
-  }
+    toast('Confirmed');setConnected(true);loadPending();updateBadgeFromServer();
+  }catch(e){toast('Error - check connection');setConnected(false);if(btn){btn.disabled=false;btn.textContent='Confirm';}}
 }
 
-async function loadPending() {
-  const el = document.getElementById('pending-list');
-  try {
-    let data = await getTransfers();
-    setConnected(true);
-    if (pendingFilter !== 'all') data = data.filter(t => t.direction === pendingFilter);
-    document.getElementById('pending-badge').innerHTML = data.length > 0 ? `<span class="count-badge">${data.length}</span>` : '';
-    if (!data.length) { el.innerHTML = '<div class="empty">No pending requests</div>'; return; }
-    el.innerHTML = [...data].reverse().map(t => {
-      const db = t.direction==='PB'?'badge-pb':'badge-bp';
-      const dl = t.direction==='PB'?'P &#8594; B':'B &#8594; P';
-      const time = new Date(t.created_at).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-      return `<div class="pending-item">
-        <div class="p-info">
-          <div class="p-name">${t.item}</div>
-          <div class="p-meta">
-            <span class="dir-badge ${db}">${dl}</span>
-            ${t.cat==='other'?'<span class="dir-badge badge-other">Other</span>':''}
-            <span>${time}</span><span>${t.initials}</span>
-            ${t.notes?`<span style="color:#aaa;">${t.notes}</span>`:''}
+async function loadPending(){
+  const el=document.getElementById('pending-list');
+  try{
+    let data=await getTransfers();setConnected(true);
+    if(pendingFilter!=='all')data=data.filter(t=>t.direction===pendingFilter);
+    document.getElementById('pending-badge').innerHTML=data.length>0?`<span class="count-badge">${data.length}</span>`:'';
+    if(!data.length){el.innerHTML='<div class="empty">No pending requests</div>';return;}
+    el.innerHTML=[...data].reverse().map(t=>{
+      const db=t.direction==='PB'?'badge-pb':'badge-bp',dl=t.direction==='PB'?'P &#8594; B':'B &#8594; P';
+      const time=new Date(t.created_at).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+      return `<div class="pending-item"><div class="p-info"><div class="p-name">${t.item}</div><div class="p-meta"><span class="dir-badge ${db}">${dl}</span>${t.cat==='other'?'<span class="dir-badge badge-other">Other</span>':''}<span>${time}</span><span>${t.initials}</span>${t.notes?`<span style="color:#aaa;">${t.notes}</span>`:''}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div class="p-qty">${t.qty}</div><button class="confirm-btn" data-confirm="${t.id}" onclick="confirmTransfer(${t.id})">Confirm &#10003;</button></div></div>`;
+    }).join('');
+  }catch(e){setConnected(false);el.innerHTML='<div class="empty">Could not load - check connection</div>';}
+}
+
+async function loadLog(){
+  const el=document.getElementById('log-list');
+  try{
+    const data=await getLog(logFilter);setConnected(true);
+    if(!data.length){el.innerHTML='<div class="empty">No movements yet</div>';return;}
+    el.innerHTML=data.map(l=>{
+      const time=new Date(l.confirmed_at).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+      return `<div class="log-item"><span class="log-time">${time}</span><span class="log-name">${l.item}</span><span class="log-qty">${l.qty}</span><span class="log-dir">${l.from_location[0]}&#8594;${l.to_location[0]}</span><span class="log-init">${l.initials}</span></div>`;
+    }).join('');
+  }catch(e){setConnected(false);el.innerHTML='<div class="empty">Could not load - check connection</div>';}
+}
+
+function setPF(f,btn){pendingFilter=f;document.querySelectorAll('#tab-pending .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');loadPending();}
+function setLF(f,btn){logFilter=f;document.querySelectorAll('#tab-log .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');loadLog();}
+
+function openAdminPrompt(){document.getElementById('pin-overlay').classList.remove('hidden');document.getElementById('pin-input').value='';document.getElementById('pin-input').classList.remove('error');setTimeout(()=>document.getElementById('pin-input').focus(),100);}
+function closePin(){document.getElementById('pin-overlay').classList.add('hidden');}
+function checkPin(){
+  const val=document.getElementById('pin-input').value;
+  if(val===PASSCODE){closePin();openAdmin();}
+  else{const inp=document.getElementById('pin-input');inp.classList.add('error');inp.value='';setTimeout(()=>inp.classList.remove('error'),400);toast('Incorrect passcode');}
+}
+function openAdmin(){document.getElementById('main-ui').style.display='none';document.getElementById('admin-ui').style.display='';renderAdminList();}
+function closeAdmin(){document.getElementById('admin-ui').style.display='none';document.getElementById('main-ui').style.display='';renderItemList();}
+function setListTab(tab,btn){adminListTab=tab;document.querySelectorAll('.list-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('new-item-input').value='';document.getElementById('new-pack-input').value='';renderAdminList();}
+
+function renderAdminList(){
+  const list=items[adminListTab]||[];
+  const ps=packSizes[adminListTab]||{};
+  const el=document.getElementById('admin-item-list');
+  if(!list.length){el.innerHTML='<div class="empty">No items yet - add one above</div>';return;}
+  el.innerHTML=list.map((name,i)=>{
+    const pack=ps[name]||'';
+    const escapedName=name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return `<div class="item-row" id="item-row-${i}">
+      <div class="item-row-info">
+        <div class="item-row-name">${name}</div>
+        <div class="item-row-pack" id="pack-display-${i}">${pack?'Pack size: '+pack:'<span style="color:#ccc;">No pack size set</span>'}</div>
+        <div id="pack-edit-${i}" style="display:none;">
+          <div class="pack-edit-row">
+            <input type="text" id="pack-input-${i}" value="${pack}" placeholder="e.g. 25kg bags...">
+            <button class="pack-save" onclick="savePack(${i},'${escapedName}')">Save</button>
+            <button class="pack-cancel-btn" onclick="cancelPackEdit(${i})">Cancel</button>
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-          <div class="p-qty">${t.qty}</div>
-          <button class="confirm-btn" data-confirm="${t.id}" onclick="confirmTransfer(${t.id})">Confirm &#10003;</button>
-        </div>
-      </div>`;
-    }).join('');
-  } catch(e) {
-    setConnected(false);
-    el.innerHTML = '<div class="empty">Could not load — check connection</div>';
-  }
+      </div>
+      <button class="edit-pack-btn" onclick="editPack(${i})">&#9998; Pack</button>
+      <button class="remove-btn" onclick="removeItem(${i})">&#10005;</button>
+    </div>`;
+  }).join('');
 }
 
-async function loadLog() {
-  const el = document.getElementById('log-list');
-  try {
-    const data = await getLog(logFilter);
-    setConnected(true);
-    if (!data.length) { el.innerHTML = '<div class="empty">No movements yet</div>'; return; }
-    el.innerHTML = data.map(l => {
-      const time = new Date(l.confirmed_at).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-      return `<div class="log-item">
-        <span class="log-time">${time}</span>
-        <span class="log-name">${l.item}</span>
-        <span class="log-qty">${l.qty}</span>
-        <span class="log-dir">${l.from_location[0]}&#8594;${l.to_location[0]}</span>
-        <span class="log-init">${l.initials}</span>
-      </div>`;
-    }).join('');
-  } catch(e) {
-    setConnected(false);
-    el.innerHTML = '<div class="empty">Could not load — check connection</div>';
-  }
+function editPack(i){document.getElementById(`pack-edit-${i}`).style.display='';setTimeout(()=>document.getElementById(`pack-input-${i}`).focus(),50);}
+function cancelPackEdit(i){document.getElementById(`pack-edit-${i}`).style.display='none';}
+function savePack(i,name){
+  const val=document.getElementById(`pack-input-${i}`).value.trim();
+  if(!packSizes[adminListTab])packSizes[adminListTab]={};
+  if(val)packSizes[adminListTab][name]=val;
+  else delete packSizes[adminListTab][name];
+  saveStorage('wh_pack_sizes',packSizes);
+  renderAdminList();toast('Pack size saved');
 }
 
-function setPF(f,btn) { pendingFilter=f; document.querySelectorAll('#tab-pending .filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); loadPending(); }
-function setLF(f,btn) { logFilter=f; document.querySelectorAll('#tab-log .filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); loadLog(); }
+function addItem(){
+  const inp=document.getElementById('new-item-input');const val=inp.value.trim();if(!val)return;
+  const packInp=document.getElementById('new-pack-input');const pack=packInp.value.trim();
+  if(!items[adminListTab])items[adminListTab]=[];
+  if(items[adminListTab].map(i=>i.toLowerCase()).includes(val.toLowerCase())){toast('Item already exists');return;}
+  items[adminListTab].push(val);items[adminListTab].sort((a,b)=>a.localeCompare(b));
+  if(pack){if(!packSizes[adminListTab])packSizes[adminListTab]={};packSizes[adminListTab][val]=pack;}
+  saveStorage('wh_items',items);saveStorage('wh_pack_sizes',packSizes);
+  inp.value='';packInp.value='';renderAdminList();toast('Item added');
+}
 
-// ---- Admin ----
-function openAdminPrompt() { document.getElementById('pin-overlay').classList.remove('hidden'); document.getElementById('pin-input').value=''; document.getElementById('pin-input').classList.remove('error'); setTimeout(()=>document.getElementById('pin-input').focus(),100); }
-function closePin() { document.getElementById('pin-overlay').classList.add('hidden'); }
-function checkPin() {
-  const val = document.getElementById('pin-input').value;
-  if (val === PASSCODE) { closePin(); openAdmin(); }
-  else { const inp=document.getElementById('pin-input'); inp.classList.add('error'); inp.value=''; setTimeout(()=>inp.classList.remove('error'),400); toast('Incorrect passcode'); }
-}
-function openAdmin() { document.getElementById('main-ui').style.display='none'; document.getElementById('admin-ui').style.display=''; renderAdminList(); }
-function closeAdmin() { document.getElementById('admin-ui').style.display='none'; document.getElementById('main-ui').style.display=''; renderItemList(); }
-function setListTab(tab,btn) { adminListTab=tab; document.querySelectorAll('.list-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.getElementById('new-item-input').value=''; renderAdminList(); }
-function renderAdminList() {
-  const list = items[adminListTab]||[];
-  const el = document.getElementById('admin-item-list');
-  if (!list.length) { el.innerHTML='<div class="empty">No items yet — add one above</div>'; return; }
-  el.innerHTML = list.map((item,i) => `<div class="item-row"><span>${item}</span><button class="remove-btn" onclick="removeItem(${i})">&#10005;</button></div>`).join('');
-}
-function addItem() {
-  const inp = document.getElementById('new-item-input'); const val=inp.value.trim(); if(!val)return;
-  if (!items[adminListTab]) items[adminListTab]=[];
-  if (items[adminListTab].map(i=>i.toLowerCase()).includes(val.toLowerCase())) { toast('Item already exists'); return; }
-  items[adminListTab].push(val); items[adminListTab].sort((a,b)=>a.localeCompare(b));
-  localStorage.setItem('wh_items', JSON.stringify(items));
-  inp.value=''; renderAdminList(); toast('Item added');
-}
-function removeItem(idx) {
+function removeItem(idx){
+  const name=items[adminListTab][idx];
   items[adminListTab].splice(idx,1);
-  localStorage.setItem('wh_items', JSON.stringify(items));
-  renderAdminList(); toast('Item removed');
+  if(packSizes[adminListTab])delete packSizes[adminListTab][name];
+  saveStorage('wh_items',items);saveStorage('wh_pack_sizes',packSizes);
+  renderAdminList();toast('Item removed');
 }
 
-function toast(msg) { const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2200); }
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200);}
 
-// ---- Init ----
 renderItemList('ingredient');
 updateBadgeFromServer();
 startPolling();

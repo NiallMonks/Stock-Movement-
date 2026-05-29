@@ -289,10 +289,7 @@ const DEFAULT_ITEMS = {
 };
 
 let direction = 'PB', pendingFilter = 'all', logFilter = 'all', adminListTab = 'ingredient';
-function loadStorage(k,f){try{const v=localStorage.getItem(k);return v?JSON.parse(v):f;}catch(e){return f;}}
-function saveStorage(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
-
-let items = loadStorage('wh_items',{ingredient:[...DEFAULT_ITEMS.ingredient],consumable:[...DEFAULT_ITEMS.consumable]});
+let items = {ingredient:[...DEFAULT_ITEMS.ingredient],consumable:[...DEFAULT_ITEMS.consumable]};
 let packSizes = {ingredient:{},consumable:{}};
 
 const isConfigured = SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_KEY !== 'YOUR_SUPABASE_ANON_KEY';
@@ -330,12 +327,38 @@ async function deletePackSize(category,item_name){
   return sbFetch(`pack_sizes?category=eq.${encodeURIComponent(category)}&item_name=eq.${encodeURIComponent(item_name)}`,{method:'DELETE'});
 }
 
+async function getItemLists(){
+  const data=await sbFetch('item_lists?order=item_name.asc&select=*');
+  if(!data||!data.length) return null; // null = use defaults
+  const lists={ingredient:[],consumable:[]};
+  (data||[]).forEach(r=>{if(lists[r.category])lists[r.category].push(r.item_name);});
+  return lists;
+}
+async function insertItemList(category,item_name){
+  return sbFetch('item_lists',{method:'POST',prefer:'return=representation',body:{category,item_name}});
+}
+async function deleteItemList(category,item_name){
+  return sbFetch(`item_lists?category=eq.${encodeURIComponent(category)}&item_name=eq.${encodeURIComponent(item_name)}`,{method:'DELETE'});
+}
+async function seedItemListsIfEmpty(){
+  // Only seed if the table is empty
+  const data=await sbFetch('item_lists?select=id&limit=1');
+  if(data&&data.length>0) return; // already has data
+  const rows=[];
+  DEFAULT_ITEMS.ingredient.forEach(n=>rows.push({category:'ingredient',item_name:n}));
+  DEFAULT_ITEMS.consumable.forEach(n=>rows.push({category:'consumable',item_name:n}));
+  // Insert in batches of 50
+  for(let i=0;i<rows.length;i+=50){
+    await sbFetch('item_lists',{method:'POST',prefer:'return=minimal',body:rows.slice(i,i+50)});
+  }
+}
+
 function setConnected(ok){const d=document.getElementById('sync-dot');d.className='sync-dot '+(ok?'live':'error');d.title=ok?'Connected - live data':'Connection error';}
 
 function startPolling(){
   if(!isConfigured)return;
   updateBadgeFromServer();
-  loadPackSizesFromServer();
+  loadAllFromServer();
   setInterval(()=>{
     const idx=[...document.querySelectorAll('.tab')].findIndex(t=>t.classList.contains('active'));
     if(idx===1)loadPending();
@@ -344,9 +367,15 @@ function startPolling(){
   },10000);
 }
 
-async function loadPackSizesFromServer(){
-  try{packSizes=await getPackSizes();renderItemList();setConnected(true);}
-  catch(e){setConnected(false);}
+async function loadAllFromServer(){
+  try{
+    await seedItemListsIfEmpty();
+    const [serverItems, serverPacks] = await Promise.all([getItemLists(), getPackSizes()]);
+    if(serverItems){items=serverItems;}
+    packSizes=serverPacks;
+    renderItemList();
+    setConnected(true);
+  }catch(e){setConnected(false);}
 }
 
 async function updateBadgeFromServer(){
@@ -470,7 +499,16 @@ function checkPin(){
   if(val===PASSCODE){closePin();openAdmin();}
   else{const inp=document.getElementById('pin-input');inp.classList.add('error');inp.value='';setTimeout(()=>inp.classList.remove('error'),400);toast('Incorrect passcode');}
 }
-async function openAdmin(){document.getElementById('main-ui').style.display='none';document.getElementById('admin-ui').style.display='';try{packSizes=await getPackSizes();}catch(e){}renderAdminList();}
+async function openAdmin(){
+  document.getElementById('main-ui').style.display='none';
+  document.getElementById('admin-ui').style.display='';
+  try{
+    const [serverItems,serverPacks]=await Promise.all([getItemLists(),getPackSizes()]);
+    if(serverItems)items=serverItems;
+    packSizes=serverPacks;
+  }catch(e){}
+  renderAdminList();
+}
 function closeAdmin(){document.getElementById('admin-ui').style.display='none';document.getElementById('main-ui').style.display='';renderItemList();}
 function setListTab(tab,btn){adminListTab=tab;document.querySelectorAll('.list-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('new-item-input').value='';document.getElementById('new-pack-input').value='';renderAdminList();}
 
@@ -517,20 +555,22 @@ async function addItem(){
   const packInp=document.getElementById('new-pack-input');const pack=packInp.value.trim();
   if(!items[adminListTab])items[adminListTab]=[];
   if(items[adminListTab].map(i=>i.toLowerCase()).includes(val.toLowerCase())){toast('Item already exists');return;}
-  items[adminListTab].push(val);items[adminListTab].sort((a,b)=>a.localeCompare(b));
-  if(pack){
-    try{await upsertPackSize(adminListTab,val,pack);packSizes[adminListTab][val]=pack;}catch(e){}
-  }
-  saveStorage('wh_items',items);
-  inp.value='';packInp.value='';renderAdminList();renderItemList();toast('Item added');
+  try{
+    await insertItemList(adminListTab,val);
+    items[adminListTab].push(val);items[adminListTab].sort((a,b)=>a.localeCompare(b));
+    if(pack){await upsertPackSize(adminListTab,val,pack);packSizes[adminListTab][val]=pack;}
+    inp.value='';packInp.value='';renderAdminList();renderItemList();toast('Item added');
+  }catch(e){toast('Error adding item - check connection');}
 }
 
 async function removeItem(idx){
   const name=items[adminListTab][idx];
-  items[adminListTab].splice(idx,1);
-  try{await deletePackSize(adminListTab,name);delete packSizes[adminListTab][name];}catch(e){}
-  saveStorage('wh_items',items);
-  renderAdminList();renderItemList();toast('Item removed');
+  try{
+    await deleteItemList(adminListTab,name);
+    items[adminListTab].splice(idx,1);
+    try{await deletePackSize(adminListTab,name);delete packSizes[adminListTab][name];}catch(e){}
+    renderAdminList();renderItemList();toast('Item removed');
+  }catch(e){toast('Error removing item - check connection');}
 }
 
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200);}
